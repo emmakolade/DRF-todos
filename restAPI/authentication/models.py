@@ -4,9 +4,13 @@ from django.contrib.auth.models import PermissionsMixin, UserManager, AbstractBa
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
+from datetime import datetime, timedelta
 
 from django.apps import apps
 from django.contrib.auth.hashers import make_password
+
+import jwt
+from django.conf import settings
 
 
 # Create your models here.
@@ -82,7 +86,7 @@ class User(TrackingModel, AbstractBaseUser, PermissionsMixin):
         ),
     )
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
-    
+
     email_verified = models.BooleanField(
         _("active"),
         default=False,
@@ -96,8 +100,9 @@ class User(TrackingModel, AbstractBaseUser, PermissionsMixin):
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
-    
+
     @property
     def token(self):
-        return ''
+        token = jwt.encode({'username': self.username, 'email': self.email, 'exp': datetime.utcnow() + timedelta(hours=24)}, settings.SECRET_KEY, algorithm='HS256')
         
+        return token
