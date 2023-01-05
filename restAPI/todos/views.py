@@ -3,11 +3,15 @@ from rest_framework.generics import CreateAPIView, ListAPIView, ListCreateAPIVie
 from rest_framework.permissions import IsAuthenticated
 from todos.serializers import TodoSerializer
 from todos.models import Todo
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class TodosApiView(ListCreateAPIView):
     serializer_class = TodoSerializer
     permission_classes = (IsAuthenticated)
+    
+    filter_backends=[DjangoFilterBackend]
+    filter_fields= ['id', 'title', 'is_complete', 'description']
 
     def perform_create(self, serializer):
         return serializer.save(user=self.request.user)
