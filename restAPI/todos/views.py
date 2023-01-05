@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework.generics import CreateAPIView, ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework import filters
 from rest_framework.permissions import IsAuthenticated
 from todos.serializers import TodoSerializer
 from todos.models import Todo
@@ -10,8 +11,10 @@ class TodosApiView(ListCreateAPIView):
     serializer_class = TodoSerializer
     permission_classes = (IsAuthenticated)
     
-    filter_backends=[DjangoFilterBackend]
-    filter_fields= ['id', 'title', 'is_complete', 'description']
+    filter_backends=[DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_fields = ['id', 'title', 'is_complete', 'description']
+    search_fields = ['id', 'title', 'is_complete', 'description']
+    ordering_fields = ['id', 'title', 'is_complete', 'description']
 
     def perform_create(self, serializer):
         return serializer.save(user=self.request.user)
