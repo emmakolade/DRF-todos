@@ -6,7 +6,7 @@ from  authentication.models import User
 class Todo(TrackingModel):
     user=models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=250)
-    descriptio = models.TextField()
+    description = models.TextField()
     is_complete=models.BooleanField(default=False)
     
     
